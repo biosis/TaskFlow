@@ -29,6 +29,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn, getInitials, formatDate } from '@/lib/utils'
 import type { GlobalTask, TaskPriority } from '@/types'
 import { TaskDetailDialog } from '@/features/tasks/TaskDetailDialog'
@@ -373,7 +374,20 @@ function PriorityTaskCard({
         </span>
       </div>
 
-      <p className="text-sm font-medium leading-snug line-clamp-2 mb-2">{task.title}</p>
+      {task.description ? (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <p className="text-sm font-medium leading-snug line-clamp-2 mb-2">{task.title}</p>
+            </TooltipTrigger>
+            <TooltipContent side="top" className="max-w-xs text-xs">
+              {task.description}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      ) : (
+        <p className="text-sm font-medium leading-snug line-clamp-2 mb-2">{task.title}</p>
+      )}
 
       <div className="flex items-center justify-between text-muted-foreground">
         {task.dueDate ? (

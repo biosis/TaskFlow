@@ -14,6 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn, getInitials, formatDate } from '@/lib/utils'
 import type { Task, TaskStatus, TaskPriority } from '@/types'
 import { TaskDetailDialog } from '@/features/tasks/TaskDetailDialog'
@@ -321,7 +322,20 @@ function TaskRow({
       <td className="px-4 py-3">
         <div>
           <div className="flex items-center gap-2">
-            <span className="font-medium truncate max-w-sm">{task.title}</span>
+            {task.description ? (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="font-medium truncate max-w-sm">{task.title}</span>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="max-w-xs text-xs">
+                    {task.description}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            ) : (
+              <span className="font-medium truncate max-w-sm">{task.title}</span>
+            )}
             {isArchived && (
               <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 font-medium">
                 <Archive className="h-2.5 w-2.5" />Archivée

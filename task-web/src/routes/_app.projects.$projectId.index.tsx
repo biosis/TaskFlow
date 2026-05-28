@@ -19,6 +19,7 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn, getInitials, formatDate } from '@/lib/utils'
 import type { Task, TaskStatus, TaskPriority, Project } from '@/types'
 import { TaskDetailDialog } from '@/features/tasks/TaskDetailDialog'
@@ -459,7 +460,20 @@ export function TaskCard({
         <div className="flex-1 min-w-0">
           <div className="flex items-start gap-1.5 mb-2">
             <span className="mt-0.5 shrink-0">{PRIORITY_ICONS[task.priority]}</span>
-            <p className="text-sm font-medium leading-tight line-clamp-2">{task.title}</p>
+            {task.description ? (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <p className="text-sm font-medium leading-tight line-clamp-2">{task.title}</p>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="max-w-xs text-xs">
+                    {task.description}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            ) : (
+              <p className="text-sm font-medium leading-tight line-clamp-2">{task.title}</p>
+            )}
             {isArchived && (
               <span className="shrink-0 ml-auto inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-700">
                 {statusLabel ?? <Archive className="h-2.5 w-2.5" />}
