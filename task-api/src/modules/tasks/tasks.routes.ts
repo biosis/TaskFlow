@@ -1,8 +1,9 @@
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
-import { createTaskBody, updateTaskBody, listTasksQuery, searchQuery } from './tasks.schema.js';
+import { createTaskBody, updateTaskBody, listTasksQuery, searchQuery, listGlobalTasksQuery } from './tasks.schema.js';
 import {
   createTaskHandler,
   listTasksHandler,
+  listGlobalTasksHandler,
   searchTasksHandler,
   getTaskHandler,
   updateTaskHandler,
@@ -95,6 +96,11 @@ export async function projectTaskRoutes(fastify: FastifyInstance): Promise<void>
 
 export async function taskRoutes(fastify: FastifyInstance): Promise<void> {
   fastify.addHook('preHandler', authenticate);
+
+  fastify.get('/global', {
+    schema: { querystring: listGlobalTasksQuery },
+    handler: listGlobalTasksHandler,
+  });
 
   fastify.get('/:id', { preHandler: [assertTaskMember()], handler: getTaskHandler });
   fastify.patch('/:id', { preHandler: [assertTaskMember()], schema: { body: updateTaskBody }, handler: updateTaskHandler });

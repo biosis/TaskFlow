@@ -1,5 +1,5 @@
 import { Link, useRouterState, useParams } from '@tanstack/react-router'
-import { LayoutDashboard, FolderKanban, Settings, Moon, Sun, LogOut, ChevronLeft, ChevronRight, ClipboardList } from 'lucide-react'
+import { LayoutDashboard, FolderKanban, Settings, Moon, Sun, LogOut, ChevronLeft, ChevronRight, ClipboardList, Flag } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { useQuery } from '@tanstack/react-query'
 import { cn } from '@/lib/utils'
@@ -42,6 +42,7 @@ export function Sidebar() {
   const navItems = [
     { to: '/projects', icon: FolderKanban, label: 'Projects' },
     { to: '/daily-report', icon: ClipboardList, label: 'Daily Report' },
+    { to: '/priority', icon: Flag, label: 'Priorities' },
     { to: '/settings', icon: Settings, label: 'Settings' },
   ]
 

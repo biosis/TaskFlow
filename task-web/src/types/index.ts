@@ -96,6 +96,10 @@ export interface AuthResponse {
   user: User
 }
 
+export interface GlobalTask extends Task {
+  project: { id: string; name: string; color: string | null }
+}
+
 export interface TaskFilters {
   status?: TaskStatus
   priority?: TaskPriority

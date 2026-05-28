@@ -38,8 +38,14 @@ export const searchQuery = z.object({
   limit: z.coerce.number().int().min(1).max(100).default(25),
 });
 
+export const listGlobalTasksQuery = z.object({
+  projectId: z.string().uuid().optional(),
+  limit: z.coerce.number().int().min(1).max(250).default(250),
+});
+
 export type CreateTaskBody = z.infer<typeof createTaskBody>;
 export type UpdateTaskBody = z.infer<typeof updateTaskBody>;
 export type ListTasksQuery = z.infer<typeof listTasksQuery>;
 export type ArchiveTasksQuery = z.infer<typeof archiveTasksQuery>;
 export type SearchQuery = z.infer<typeof searchQuery>;
+export type ListGlobalTasksQuery = z.infer<typeof listGlobalTasksQuery>;

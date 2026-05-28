@@ -15,6 +15,7 @@ import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppSettingsRouteImport } from './routes/_app.settings'
 import { Route as AppProjectsRouteImport } from './routes/_app.projects'
+import { Route as AppPriorityRouteImport } from './routes/_app.priority'
 import { Route as AppDailyReportRouteImport } from './routes/_app.daily-report'
 import { Route as AppProjectsIndexRouteImport } from './routes/_app.projects.index'
 import { Route as AppProjectsProjectIdRouteImport } from './routes/_app.projects.$projectId'
@@ -49,6 +50,11 @@ const AppSettingsRoute = AppSettingsRouteImport.update({
 const AppProjectsRoute = AppProjectsRouteImport.update({
   id: '/projects',
   path: '/projects',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPriorityRoute = AppPriorityRouteImport.update({
+  id: '/priority',
+  path: '/priority',
   getParentRoute: () => AppRoute,
 } as any)
 const AppDailyReportRoute = AppDailyReportRouteImport.update({
@@ -90,6 +96,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/daily-report': typeof AppDailyReportRoute
+  '/priority': typeof AppPriorityRoute
   '/projects': typeof AppProjectsRouteWithChildren
   '/settings': typeof AppSettingsRoute
   '/projects/$projectId': typeof AppProjectsProjectIdRouteWithChildren
@@ -103,6 +110,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/daily-report': typeof AppDailyReportRoute
+  '/priority': typeof AppPriorityRoute
   '/settings': typeof AppSettingsRoute
   '/projects': typeof AppProjectsIndexRoute
   '/projects/$projectId/list': typeof AppProjectsProjectIdListRoute
@@ -116,6 +124,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/_app/daily-report': typeof AppDailyReportRoute
+  '/_app/priority': typeof AppPriorityRoute
   '/_app/projects': typeof AppProjectsRouteWithChildren
   '/_app/settings': typeof AppSettingsRoute
   '/_app/projects/$projectId': typeof AppProjectsProjectIdRouteWithChildren
@@ -131,6 +140,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/daily-report'
+    | '/priority'
     | '/projects'
     | '/settings'
     | '/projects/$projectId'
@@ -144,6 +154,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/daily-report'
+    | '/priority'
     | '/settings'
     | '/projects'
     | '/projects/$projectId/list'
@@ -156,6 +167,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/_app/daily-report'
+    | '/_app/priority'
     | '/_app/projects'
     | '/_app/settings'
     | '/_app/projects/$projectId'
@@ -214,6 +226,13 @@ declare module '@tanstack/react-router' {
       path: '/projects'
       fullPath: '/projects'
       preLoaderRoute: typeof AppProjectsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/priority': {
+      id: '/_app/priority'
+      path: '/priority'
+      fullPath: '/priority'
+      preLoaderRoute: typeof AppPriorityRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/daily-report': {
@@ -292,12 +311,14 @@ const AppProjectsRouteWithChildren = AppProjectsRoute._addFileChildren(
 
 interface AppRouteChildren {
   AppDailyReportRoute: typeof AppDailyReportRoute
+  AppPriorityRoute: typeof AppPriorityRoute
   AppProjectsRoute: typeof AppProjectsRouteWithChildren
   AppSettingsRoute: typeof AppSettingsRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppDailyReportRoute: AppDailyReportRoute,
+  AppPriorityRoute: AppPriorityRoute,
   AppProjectsRoute: AppProjectsRouteWithChildren,
   AppSettingsRoute: AppSettingsRoute,
 }

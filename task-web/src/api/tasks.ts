@@ -1,5 +1,5 @@
 import api from './client'
-import type { Task, Comment, Attachment, Paginated, TaskStatus, TaskPriority } from '@/types'
+import type { Task, GlobalTask, Comment, Attachment, Paginated, TaskStatus, TaskPriority } from '@/types'
 
 export interface CreateTaskInput {
   title: string
@@ -37,6 +37,8 @@ export interface ListTasksParams {
 export const tasksApi = {
   list: (projectId: string, params?: ListTasksParams) =>
     api.get<Paginated<Task>>(`/projects/${projectId}/tasks`, { params }).then((r) => r.data),
+  listGlobal: (params?: { projectId?: string }) =>
+    api.get<{ items: GlobalTask[] }>('/tasks/global', { params }).then((r) => r.data),
   get: (id: string) => api.get<{ task: Task }>(`/tasks/${id}`).then((r) => r.data.task),
   create: (projectId: string, data: CreateTaskInput) =>
     api.post<{ task: Task }>(`/projects/${projectId}/tasks`, data).then((r) => r.data.task),

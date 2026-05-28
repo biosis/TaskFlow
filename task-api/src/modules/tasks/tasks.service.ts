@@ -11,7 +11,7 @@ import {
 } from '../../utils/errors.js';
 import { decodeCursor, encodeCursor, DEFAULT_LIMIT } from '../../utils/pagination.js';
 import { config } from '../../config.js';
-import type { CreateTaskBody, UpdateTaskBody, ListTasksQuery, ArchiveTasksQuery } from './tasks.schema.js';
+import type { CreateTaskBody, UpdateTaskBody, ListTasksQuery, ArchiveTasksQuery, ListGlobalTasksQuery } from './tasks.schema.js';
 
 const TASK_SELECT = {
   id: true, projectId: true, parentId: true, depth: true, title: true, description: true,
@@ -182,6 +182,40 @@ export async function listTasks(prisma: PrismaClient, projectId: string, query: 
       : null;
 
   return { items: flatItems, nextCursor };
+}
+
+export async function listGlobalTasks(
+  prisma: PrismaClient,
+  userId: string,
+  query: ListGlobalTasksQuery,
+) {
+  const items = await prisma.task.findMany({
+    where: {
+      parentId: null,
+      deletedAt: null,
+      archivedAt: null,
+      status: { in: ['TODO', 'IN_PROGRESS'] },
+      project: {
+        deletedAt: null,
+        archivedAt: null,
+        members: { some: { userId } },
+      },
+      ...(query.projectId ? { projectId: query.projectId } : {}),
+    },
+    orderBy: [
+      { priority: 'desc' },
+      { dueDate: { sort: 'asc', nulls: 'last' } },
+      { createdAt: 'asc' },
+    ],
+    take: query.limit,
+    select: {
+      ...TASK_SELECT,
+      project: { select: { id: true, name: true, color: true } },
+    },
+  });
+  return {
+    items: items.map((t) => ({ ...flattenRelations(t), project: t.project })),
+  };
 }
 
 export async function getTask(prisma: PrismaClient, taskId: string) {

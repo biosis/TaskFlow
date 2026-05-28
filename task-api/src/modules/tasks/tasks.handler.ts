@@ -3,7 +3,7 @@ import * as tasksService from './tasks.service.js';
 import * as assigneesService from './tasks.assignees.service.js';
 import * as depsService from './tasks.dependencies.service.js';
 import * as searchService from './tasks.search.service.js';
-import type { CreateTaskBody, UpdateTaskBody, ListTasksQuery, SearchQuery } from './tasks.schema.js';
+import type { CreateTaskBody, UpdateTaskBody, ListTasksQuery, SearchQuery, ListGlobalTasksQuery } from './tasks.schema.js';
 import { paginationQuerySchema } from '../../utils/pagination.js';
 import type { ActivityEmitter } from '../activity/activity.emitter.js';
 
@@ -35,6 +35,14 @@ export async function listTasksHandler(
   reply: FastifyReply,
 ) {
   const result = await tasksService.listTasks(request.server.prisma, request.params.pid, request.query);
+  return reply.send(result);
+}
+
+export async function listGlobalTasksHandler(
+  request: FastifyRequest<{ Querystring: ListGlobalTasksQuery }>,
+  reply: FastifyReply,
+) {
+  const result = await tasksService.listGlobalTasks(request.server.prisma, request.user!.id, request.query);
   return reply.send(result);
 }
 
