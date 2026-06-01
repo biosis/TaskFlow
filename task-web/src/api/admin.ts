@@ -1,5 +1,5 @@
 import api from './client'
-import type { AdminUser, AdminStats } from '@/types'
+import type { AdminUser, AdminStats, AdminUserStats } from '@/types'
 
 export interface AdminUsersParams {
   page?: number
@@ -19,4 +19,6 @@ export const adminApi = {
   getStats: () => api.get<AdminStats>('/admin/stats').then((r) => r.data),
   listUsers: (params?: AdminUsersParams) =>
     api.get<AdminUsersResponse>('/admin/users', { params }).then((r) => r.data),
+  getUserStats: (userId: string) =>
+    api.get<AdminUserStats>(`/admin/users/${userId}/stats`).then((r) => r.data),
 }

@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { adminApi } from '@/api/admin'
@@ -10,7 +10,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { getInitials } from '@/lib/utils'
 import { Search, ChevronLeft, ChevronRight } from 'lucide-react'
 
-export const Route = createFileRoute('/_app/admin/users')({
+export const Route = createFileRoute('/_app/admin/users/')({
   component: AdminUsers,
 })
 
@@ -104,7 +104,13 @@ function AdminUsers() {
                             {getInitials(u.displayName)}
                           </AvatarFallback>
                         </Avatar>
-                        <span className="font-medium truncate max-w-[160px]">{u.displayName}</span>
+                        <Link
+                          to="/admin/users/$userId"
+                          params={{ userId: u.id }}
+                          className="font-medium truncate max-w-[160px] hover:underline"
+                        >
+                          {u.displayName}
+                        </Link>
                       </div>
                     </td>
                     <td className="px-4 py-3 text-muted-foreground truncate max-w-[200px]">

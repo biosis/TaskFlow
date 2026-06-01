@@ -1,4 +1,5 @@
 import type { PrismaClient, Prisma } from '@prisma/client';
+import { NotFoundError } from '../../utils/errors.js';
 import type { ListUsersQuery } from './admin.schema.js';
 
 const ADMIN_USER_SELECT = {
@@ -46,6 +47,46 @@ export async function getStats(prisma: PrismaClient) {
     projects: { total: totalProjects, active: activeProjects, archived: archivedProjects },
     tasks: { total: totalTasks, byStatus },
     newUsersLast30Days,
+  };
+}
+
+export async function getUserStats(prisma: PrismaClient, userId: string) {
+  const user = await prisma.user.findUnique({ where: { id: userId }, select: ADMIN_USER_SELECT });
+  if (!user) throw new NotFoundError('User');
+
+  const [
+    tasksCreatedTotal,
+    tasksCreatedByStatus,
+    tasksAssignedTotal,
+    tasksAssignedByStatus,
+    projectsOwned,
+    projectsMember,
+    commentsCount,
+    activitiesCount,
+  ] = await Promise.all([
+    prisma.task.count({ where: { createdById: userId, deletedAt: null } }),
+    prisma.task.groupBy({ by: ['status'], where: { createdById: userId, deletedAt: null }, _count: true }),
+    prisma.task.count({ where: { assignees: { some: { userId } }, deletedAt: null } }),
+    prisma.task.groupBy({ by: ['status'], where: { assignees: { some: { userId } }, deletedAt: null }, _count: true }),
+    prisma.project.count({ where: { ownerId: userId, deletedAt: null } }),
+    prisma.projectMember.count({ where: { userId, project: { deletedAt: null } } }),
+    prisma.comment.count({ where: { authorId: userId, deletedAt: null } }),
+    prisma.activity.count({ where: { actorId: userId } }),
+  ]);
+
+  return {
+    user,
+    tasksCreated: {
+      total: tasksCreatedTotal,
+      byStatus: Object.fromEntries(tasksCreatedByStatus.map((g) => [g.status, g._count])),
+    },
+    tasksAssigned: {
+      total: tasksAssignedTotal,
+      byStatus: Object.fromEntries(tasksAssignedByStatus.map((g) => [g.status, g._count])),
+    },
+    projects: { owned: projectsOwned, memberOf: projectsMember },
+    commentsCount,
+    activitiesCount,
   };
 }
 

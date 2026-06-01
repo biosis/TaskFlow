@@ -25,6 +25,15 @@ export interface AdminUser {
   deletedAt: string | null
 }
 
+export interface AdminUserStats {
+  user: AdminUser
+  tasksCreated: { total: number; byStatus: Partial<Record<TaskStatus, number>> }
+  tasksAssigned: { total: number; byStatus: Partial<Record<TaskStatus, number>> }
+  projects: { owned: number; memberOf: number }
+  commentsCount: number
+  activitiesCount: number
+}
+
 export interface AdminStats {
   users: { total: number; active: number; deleted: number; admins: number }
   projects: { total: number; active: number; archived: number }

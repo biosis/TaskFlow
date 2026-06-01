@@ -8,3 +8,6 @@ export const listUsersQuery = z.object({
 });
 
 export type ListUsersQuery = z.infer<typeof listUsersQuery>;
+
+export const userIdParam = z.object({ userId: z.string().uuid() });
+export type UserIdParam = z.infer<typeof userIdParam>;
