@@ -11,6 +11,7 @@ const ADMIN_USER_SELECT = {
   emailVerified: true,
   createdAt: true,
   deletedAt: true,
+  lastLoginAt: true,
 } as const;
 
 export async function getStats(prisma: PrismaClient) {
@@ -63,6 +64,7 @@ export async function getUserStats(prisma: PrismaClient, userId: string) {
     projectsMember,
     commentsCount,
     activitiesCount,
+    lastActivity,
   ] = await Promise.all([
     prisma.task.count({ where: { createdById: userId, deletedAt: null } }),
     prisma.task.groupBy({ by: ['status'], where: { createdById: userId, deletedAt: null }, _count: true }),
@@ -72,6 +74,7 @@ export async function getUserStats(prisma: PrismaClient, userId: string) {
     prisma.projectMember.count({ where: { userId, project: { deletedAt: null } } }),
     prisma.comment.count({ where: { authorId: userId, deletedAt: null } }),
     prisma.activity.count({ where: { actorId: userId } }),
+    prisma.activity.findFirst({ where: { actorId: userId }, orderBy: { createdAt: 'desc' }, select: { createdAt: true } }),
   ]);
 
   return {
@@ -87,6 +90,7 @@ export async function getUserStats(prisma: PrismaClient, userId: string) {
     projects: { owned: projectsOwned, memberOf: projectsMember },
     commentsCount,
     activitiesCount,
+    lastActivityAt: lastActivity?.createdAt ?? null,
   };
 }
 

@@ -30,7 +30,7 @@ export async function register(
   const userId = newId();
 
   const user = await prisma.user.create({
-    data: { id: userId, email: data.email, passwordHash, displayName: data.displayName },
+    data: { id: userId, email: data.email, passwordHash, displayName: data.displayName, lastLoginAt: new Date() },
   });
 
   return issueTokens(prisma, redis, user, meta);
@@ -46,10 +46,12 @@ export async function login(
   data: { email: string; password: string },
   meta: { userAgent?: string; ip?: string },
 ) {
-  const user = await prisma.user.findUnique({ where: { email: data.email } });
-  const stored = user?.passwordHash ?? DUMMY_HASH;
+  const found = await prisma.user.findUnique({ where: { email: data.email } });
+  const stored = found?.passwordHash ?? DUMMY_HASH;
   const ok = await verify(data.password, stored);
-  if (!user || !ok) throw new InvalidCredentialsError();
+  if (!found || !ok) throw new InvalidCredentialsError();
+
+  const user = await prisma.user.update({ where: { id: found.id }, data: { lastLoginAt: new Date() } });
 
   return issueTokens(prisma, redis, user, meta);
 }

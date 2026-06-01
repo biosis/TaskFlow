@@ -22,6 +22,7 @@ model User {
   createdAt     DateTime  @default(now()) @map("created_at")
   updatedAt     DateTime  @updatedAt @map("updated_at")
   deletedAt     DateTime? @map("deleted_at")
+  lastLoginAt   DateTime? @map("last_login_at")
 
   ownedProjects   Project[]        @relation("ProjectOwner")
   memberships     ProjectMember[]

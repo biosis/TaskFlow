@@ -121,6 +121,12 @@ function AdminUserStatsPage() {
               <p className="text-xs text-muted-foreground">
                 Inscrit le {new Date(data.user.createdAt).toLocaleDateString('fr-FR')}
               </p>
+              <p className="text-xs text-muted-foreground">
+                Dernière connexion :{' '}
+                {data.user.lastLoginAt
+                  ? new Date(data.user.lastLoginAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
+                  : 'jamais'}
+              </p>
             </div>
           </>
         ) : null}
@@ -207,18 +213,28 @@ function AdminUserStatsPage() {
             {isLoading ? (
               Array.from({ length: 2 }).map((_, i) => <Skeleton key={i} className="h-5 w-full" />)
             ) : data ? (
-              [
-                { label: 'Commentaires', icon: MessageSquare, value: data.commentsCount },
-                { label: 'Événements', icon: Activity, value: data.activitiesCount },
-              ].map(({ label, icon: Icon, value }) => (
-                <div key={label} className="flex justify-between items-center text-sm">
-                  <span className="text-muted-foreground flex items-center gap-2">
-                    <Icon className="h-3.5 w-3.5" />
-                    {label}
+              <>
+                {[
+                  { label: 'Commentaires', icon: MessageSquare, value: data.commentsCount },
+                  { label: 'Événements', icon: Activity, value: data.activitiesCount },
+                ].map(({ label, icon: Icon, value }) => (
+                  <div key={label} className="flex justify-between items-center text-sm">
+                    <span className="text-muted-foreground flex items-center gap-2">
+                      <Icon className="h-3.5 w-3.5" />
+                      {label}
+                    </span>
+                    <span className="font-semibold">{value}</span>
+                  </div>
+                ))}
+                <div className="flex justify-between items-center text-sm pt-1 border-t">
+                  <span className="text-muted-foreground">Dernière activité</span>
+                  <span className="font-semibold">
+                    {data.lastActivityAt
+                      ? new Date(data.lastActivityAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
+                      : '—'}
                   </span>
-                  <span className="font-semibold">{value}</span>
                 </div>
-              ))
+              </>
             ) : null}
           </CardContent>
         </Card>

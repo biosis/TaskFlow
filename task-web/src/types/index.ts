@@ -23,6 +23,7 @@ export interface AdminUser {
   emailVerified: boolean
   createdAt: string
   deletedAt: string | null
+  lastLoginAt: string | null
 }
 
 export interface AdminUserStats {
@@ -32,6 +33,7 @@ export interface AdminUserStats {
   projects: { owned: number; memberOf: number }
   commentsCount: number
   activitiesCount: number
+  lastActivityAt: string | null
 }
 
 export interface AdminStats {

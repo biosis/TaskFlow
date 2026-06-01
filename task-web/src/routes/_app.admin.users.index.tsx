@@ -80,14 +80,15 @@ function AdminUsers() {
               <th className="text-left px-4 py-3 font-medium text-muted-foreground">Email</th>
               <th className="text-left px-4 py-3 font-medium text-muted-foreground">Rôle</th>
               <th className="text-left px-4 py-3 font-medium text-muted-foreground">Statut</th>
-              <th className="text-left px-4 py-3 font-medium text-muted-foreground">Inscription</th>
+              <th className="text-left px-4 py-3 font-medium text-muted-foreground">Inscrit le</th>
+              <th className="text-left px-4 py-3 font-medium text-muted-foreground">Dernière connexion</th>
             </tr>
           </thead>
           <tbody className="divide-y">
             {isLoading
               ? Array.from({ length: 8 }).map((_, i) => (
                   <tr key={i}>
-                    {Array.from({ length: 5 }).map((_, j) => (
+                    {Array.from({ length: 6 }).map((_, j) => (
                       <td key={j} className="px-4 py-3">
                         <Skeleton className="h-4 w-full" />
                       </td>
@@ -132,6 +133,9 @@ function AdminUsers() {
                     </td>
                     <td className="px-4 py-3 text-muted-foreground">
                       {new Date(u.createdAt).toLocaleDateString('fr-FR')}
+                    </td>
+                    <td className="px-4 py-3 text-muted-foreground">
+                      {u.lastLoginAt ? new Date(u.lastLoginAt).toLocaleDateString('fr-FR') : '—'}
                     </td>
                   </tr>
                 ))}
