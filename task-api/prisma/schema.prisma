@@ -16,6 +16,7 @@ model User {
   displayName   String    @map("display_name") @db.VarChar(80)
   avatarUrl            String?   @map("avatar_url")
   archiveThresholdDays Int       @default(14) @map("archive_threshold_days")
+  theme                String?   @db.VarChar(32)
   emailVerified        Boolean   @default(false) @map("email_verified")
   createdAt     DateTime  @default(now()) @map("created_at")
   updatedAt     DateTime  @updatedAt @map("updated_at")

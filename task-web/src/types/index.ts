@@ -8,6 +8,7 @@ export interface User {
   displayName: string
   avatarUrl?: string
   archiveThresholdDays: number
+  theme?: string | null
   createdAt: string
 }
 

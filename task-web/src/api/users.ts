@@ -5,6 +5,7 @@ export interface UpdateMeInput {
   displayName?: string
   avatarUrl?: string | null
   archiveThresholdDays?: number
+  theme?: string | null
 }
 
 export interface ChangePasswordInput {

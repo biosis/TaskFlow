@@ -1,25 +1,48 @@
 import { Link, useRouterState, useParams } from '@tanstack/react-router'
-import { LayoutDashboard, FolderKanban, Settings, Moon, Sun, LogOut, ChevronLeft, ChevronRight, ClipboardList, Flag } from 'lucide-react'
+import { LayoutDashboard, FolderKanban, Settings, LogOut, ChevronLeft, ChevronRight, ClipboardList, Flag, Palette } from 'lucide-react'
 import { useTheme } from 'next-themes'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation } from '@tanstack/react-query'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { Skeleton } from '@/components/ui/skeleton'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { useAuthStore } from '@/stores/auth.store'
 import { useUiStore } from '@/stores/ui.store'
 import { getInitials } from '@/lib/utils'
 import { authApi } from '@/api/auth'
 import { projectsApi } from '@/api/projects'
+import { usersApi } from '@/api/users'
 import { queryClient } from '@/api/client'
 import { useNavigate } from '@tanstack/react-router'
 
+const THEMES = [
+  { value: 'light', label: 'Light' },
+  { value: 'dark', label: 'Dark' },
+  { value: 'nord', label: 'Nord' },
+  { value: 'solarized', label: 'Solarized' },
+  { value: 'forest', label: 'Forest' },
+]
+
 export function Sidebar() {
-  const { user, clearAuth } = useAuthStore()
+  const { user, clearAuth, setUser } = useAuthStore()
   const { sidebarOpen, toggleSidebar } = useUiStore()
   const { theme, setTheme } = useTheme()
   const navigate = useNavigate()
+
+  const themeMutation = useMutation({
+    mutationFn: (v: string | null) => usersApi.updateMe({ theme: v }),
+    onSuccess: (updated) => setUser(updated),
+  })
+
+  const handleThemeChange = (value: string | null) => {
+    const prev = theme
+    setTheme(value ?? 'system')
+    themeMutation.mutate(value, {
+      onError: () => setTheme(prev ?? 'system'),
+    })
+  }
   const routerState = useRouterState()
   const pathname = routerState.location.pathname
 
@@ -129,18 +152,35 @@ export function Sidebar() {
       <div className="border-t p-2 space-y-1">
         <Tooltip delayDuration={0}>
           <TooltipTrigger asChild>
-            <Button
-              variant="ghost"
-              size={sidebarOpen ? 'sm' : 'icon'}
-              className={cn('w-full', sidebarOpen ? 'justify-start gap-3 px-2' : 'h-9 w-9')}
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            >
-              <Sun className="h-4 w-4 dark:hidden" />
-              <Moon className="h-4 w-4 hidden dark:block" />
-              {sidebarOpen && <span className="text-sm">Toggle theme</span>}
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size={sidebarOpen ? 'sm' : 'icon'}
+                  className={cn('w-full', sidebarOpen ? 'justify-start gap-3 px-2' : 'h-9 w-9')}
+                >
+                  <Palette className="h-4 w-4 shrink-0" />
+                  {sidebarOpen && <span className="text-sm">Theme</span>}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent side="right" align="end">
+                {THEMES.map(({ value, label }) => (
+                  <DropdownMenuItem
+                    key={value}
+                    onClick={() => handleThemeChange(value)}
+                    className={cn(theme === value && 'bg-accent text-accent-foreground')}
+                  >
+                    {label}
+                  </DropdownMenuItem>
+                ))}
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => handleThemeChange(null)}>
+                  System default
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </TooltipTrigger>
-          {!sidebarOpen && <TooltipContent side="right">Toggle theme</TooltipContent>}
+          {!sidebarOpen && <TooltipContent side="right">Theme</TooltipContent>}
         </Tooltip>
 
         <Tooltip delayDuration={0}>

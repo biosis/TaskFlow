@@ -4,8 +4,9 @@ import { verify, hash, validateStrength } from '../../utils/password.js';
 import { InvalidCredentialsError } from '../../utils/errors.js';
 import type { UpdateMeBody, ChangePasswordBody } from './users.schema.js';
 
-const USER_SELECT = {
-  id: true, email: true, displayName: true, avatarUrl: true, archiveThresholdDays: true, emailVerified: true, createdAt: true,
+export const USER_SELECT = {
+  id: true, email: true, displayName: true, avatarUrl: true,
+  archiveThresholdDays: true, theme: true, emailVerified: true, createdAt: true,
 } as const;
 
 export async function getMe(prisma: PrismaClient, userId: string) {

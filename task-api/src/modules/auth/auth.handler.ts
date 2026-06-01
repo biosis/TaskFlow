@@ -2,6 +2,7 @@ import type { FastifyRequest, FastifyReply } from 'fastify';
 import * as authService from './auth.service.js';
 import type { RegisterBody, LoginBody } from './auth.schema.js';
 import { config } from '../../config.js';
+import { USER_SELECT } from '../users/users.service.js';
 
 const COOKIE_NAME = 'rt';
 const COOKIE_OPTS = {
@@ -27,7 +28,7 @@ export async function registerHandler(
 
   const user = await request.server.prisma.user.findUniqueOrThrow({
     where: { email: request.body.email },
-    select: { id: true, email: true, displayName: true, avatarUrl: true, emailVerified: true, createdAt: true },
+    select: USER_SELECT,
   });
 
   void reply.setCookie(COOKIE_NAME, refreshToken, COOKIE_OPTS);
@@ -48,7 +49,7 @@ export async function loginHandler(
 
   const user = await request.server.prisma.user.findUniqueOrThrow({
     where: { email: request.body.email },
-    select: { id: true, email: true, displayName: true, avatarUrl: true, emailVerified: true, createdAt: true },
+    select: USER_SELECT,
   });
 
   void reply.setCookie(COOKIE_NAME, refreshToken, COOKIE_OPTS);
@@ -87,7 +88,7 @@ export async function logoutHandler(request: FastifyRequest, reply: FastifyReply
 export async function getMeHandler(request: FastifyRequest, reply: FastifyReply) {
   const user = await request.server.prisma.user.findUniqueOrThrow({
     where: { id: request.user!.id },
-    select: { id: true, email: true, displayName: true, avatarUrl: true, emailVerified: true, createdAt: true },
+    select: USER_SELECT,
   });
   return reply.send({ user });
 }
