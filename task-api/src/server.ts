@@ -25,6 +25,7 @@ import { taskCommentRoutes, commentRoutes } from './modules/comments/comments.ro
 import { taskAttachmentRoutes, attachmentRoutes } from './modules/attachments/attachments.routes.js';
 import { projectActivityRoutes, taskActivityRoutes, userActivityRoutes } from './modules/activity/activity.routes.js';
 import { healthRoutes } from './modules/health/health.routes.js';
+import { adminRoutes } from './modules/admin/admin.routes.js';
 import { ActivityEmitter } from './modules/activity/activity.emitter.js';
 
 export async function buildApp() {
@@ -108,6 +109,7 @@ export async function buildApp() {
   await fastify.register(projectActivityRoutes, { prefix: `${v1}/projects/:pid/activity` });
   await fastify.register(taskActivityRoutes, { prefix: `${v1}/tasks/:id/activity` });
   await fastify.register(userActivityRoutes, { prefix: `${v1}/users/me/activity` });
+  await fastify.register(adminRoutes, { prefix: `${v1}/admin` });
 
   return fastify;
 }

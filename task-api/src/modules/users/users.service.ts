@@ -6,7 +6,7 @@ import type { UpdateMeBody, ChangePasswordBody } from './users.schema.js';
 
 export const USER_SELECT = {
   id: true, email: true, displayName: true, avatarUrl: true,
-  archiveThresholdDays: true, theme: true, emailVerified: true, createdAt: true,
+  archiveThresholdDays: true, theme: true, emailVerified: true, role: true, createdAt: true,
 } as const;
 
 export async function getMe(prisma: PrismaClient, userId: string) {

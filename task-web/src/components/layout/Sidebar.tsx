@@ -1,5 +1,5 @@
 import { Link, useRouterState, useParams } from '@tanstack/react-router'
-import { LayoutDashboard, FolderKanban, Settings, LogOut, ChevronLeft, ChevronRight, ClipboardList, Flag, Palette } from 'lucide-react'
+import { LayoutDashboard, FolderKanban, Settings, LogOut, ChevronLeft, ChevronRight, ClipboardList, Flag, Palette, Shield } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { cn } from '@/lib/utils'
@@ -67,6 +67,7 @@ export function Sidebar() {
     { to: '/daily-report', icon: ClipboardList, label: 'Daily Report' },
     { to: '/priority', icon: Flag, label: 'Priorities' },
     { to: '/settings', icon: Settings, label: 'Settings' },
+    ...(user?.role === 'ADMIN' ? [{ to: '/admin', icon: Shield, label: 'Admin' }] : []),
   ]
 
   return (

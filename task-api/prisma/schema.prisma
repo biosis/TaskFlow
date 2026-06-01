@@ -18,6 +18,7 @@ model User {
   archiveThresholdDays Int       @default(14) @map("archive_threshold_days")
   theme                String?   @db.VarChar(32)
   emailVerified        Boolean   @default(false) @map("email_verified")
+  role                 UserRole  @default(USER)
   createdAt     DateTime  @default(now()) @map("created_at")
   updatedAt     DateTime  @updatedAt @map("updated_at")
   deletedAt     DateTime? @map("deleted_at")
@@ -48,6 +49,11 @@ model RefreshSession {
   @@index([userId])
   @@index([expiresAt])
   @@map("refresh_sessions")
+}
+
+enum UserRole {
+  USER
+  ADMIN
 }
 
 enum ProjectRole {

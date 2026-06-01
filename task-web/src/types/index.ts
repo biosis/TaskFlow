@@ -1,6 +1,7 @@
 export type TaskStatus = 'TODO' | 'IN_PROGRESS' | 'REVIEW' | 'BLOCKED' | 'DONE' | 'CANCELLED'
 export type TaskPriority = 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT'
 export type ProjectRole = 'OWNER' | 'ADMIN' | 'MEMBER' | 'VIEWER'
+export type UserRole = 'USER' | 'ADMIN'
 
 export interface User {
   id: string
@@ -9,7 +10,26 @@ export interface User {
   avatarUrl?: string
   archiveThresholdDays: number
   theme?: string | null
+  role?: UserRole
   createdAt: string
+}
+
+export interface AdminUser {
+  id: string
+  email: string
+  displayName: string
+  avatarUrl?: string
+  role: UserRole
+  emailVerified: boolean
+  createdAt: string
+  deletedAt: string | null
+}
+
+export interface AdminStats {
+  users: { total: number; active: number; deleted: number; admins: number }
+  projects: { total: number; active: number; archived: number }
+  tasks: { total: number; byStatus: Record<TaskStatus, number> }
+  newUsersLast30Days: number
 }
 
 export interface Project {
