@@ -27,6 +27,7 @@ import { projectActivityRoutes, taskActivityRoutes, userActivityRoutes } from '.
 import { healthRoutes } from './modules/health/health.routes.js';
 import { adminRoutes } from './modules/admin/admin.routes.js';
 import { ActivityEmitter } from './modules/activity/activity.emitter.js';
+import { getUploadDir } from './modules/attachments/attachments.service.js';
 
 export async function buildApp() {
   const fastify = Fastify({
@@ -110,6 +111,8 @@ export async function buildApp() {
   await fastify.register(taskActivityRoutes, { prefix: `${v1}/tasks/:id/activity` });
   await fastify.register(userActivityRoutes, { prefix: `${v1}/users/me/activity` });
   await fastify.register(adminRoutes, { prefix: `${v1}/admin` });
+
+  await getUploadDir();
 
   return fastify;
 }

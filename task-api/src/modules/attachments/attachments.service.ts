@@ -22,7 +22,7 @@ import {
   sanitizeFilename,
 } from './attachments.schema.js';
 
-async function getUploadDir(): Promise<string> {
+export async function getUploadDir(): Promise<string> {
   const dir = path.resolve(config.UPLOAD_DIR);
   await mkdir(dir, { recursive: true });
   return dir;
@@ -115,6 +115,14 @@ export async function getAttachmentForDownload(
 
   // Guard against path traversal (storedName is UUID-generated but validate anyway)
   if (!filePath.startsWith(uploadDir + path.sep)) throw new AttachmentNotFoundError();
+
+  // Check file exists before creating stream — createReadStream is lazy and would
+  // fail after headers are already sent, making the error unrecoverable.
+  try {
+    await stat(filePath);
+  } catch {
+    throw new AttachmentNotFoundError();
+  }
 
   return { attachment, stream: createReadStream(filePath) };
 }
